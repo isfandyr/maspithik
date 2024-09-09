@@ -4,8 +4,10 @@ import { FiX, FiTrash2, FiMinus, FiPlus } from 'react-icons/fi';
 import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
 import Payment from './Payment';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromCart, clearCart }) => {
+  const navigate = useNavigate();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -84,6 +86,11 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
     }
   };
 
+  const handleViewMenu = () => {
+    onClose();
+    navigate('/fullmenu');
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -119,7 +126,15 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
                   </button>
                 </div>
               ) : cartItems.length === 0 ? (
-                <p className="text-center text-muted-foreground">Keranjang Anda kosong.</p>
+                <div className="text-center">
+                  <p className="text-muted-foreground mb-4">Keranjang Anda kosong.</p>
+                  <button
+                    onClick={handleViewMenu}
+                    className="bg-primary text-primary-foreground py-2 px-4 rounded-md hover:bg-primary/90 transition duration-300"
+                  >
+                    Lihat Menu
+                  </button>
+                </div>
               ) : (
                 <>
                   <ul className="space-y-4 mb-4 max-h-60 overflow-y-auto">
