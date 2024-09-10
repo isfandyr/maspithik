@@ -12,7 +12,7 @@ const FullMenu = ({ addToCart }) => {
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState({});
 
-  const categories = ['Makanan', 'Minuman', 'Sate & Gorengan', 'Jajanan'];
+  const categories = ['Nasi Kucing', 'Minuman', 'Sate-satean', 'Cemilan'];
 
   useEffect(() => {
     fetchMenuItems();
@@ -88,9 +88,9 @@ const FullMenu = ({ addToCart }) => {
         price: item.price
       });
       setQuantities(prev => ({ ...prev, [id]: 0 }));
-      toast.success(`${quantity} ${item.title}(s) added to cart`);
+      toast.success(`${quantity} ${item.title}(s) dimasukkan ke keranjang`);
     } else {
-      toast.error('Please select a quantity greater than 0');
+      toast.error('Silahkan pilih jumlah yang lebih dari 0');
     }
   };
 
@@ -104,7 +104,7 @@ const FullMenu = ({ addToCart }) => {
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search menu..."
+            placeholder="Cari menu..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-md"

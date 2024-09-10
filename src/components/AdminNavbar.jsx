@@ -53,7 +53,7 @@ const AdminNavbar = ({ userName, setActiveTab }) => {
     <>
       <nav className="bg-background/80 backdrop-blur-md py-4 px-6 md:px-10 flex items-center justify-between fixed top-0 left-0 right-0 z-50 shadow-md">
         <Link to="/admin" className="flex items-center gap-2 transition-transform hover:scale-105">
-          <img src="/src/assets/logo.svg" alt="Logo" className="w-8 h-8" />
+          {/* <img src="/src/assets/logo.svg" alt="Logo" className="w-8 h-8" /> */}
           <span className="text-2xl font-bold text-primary">Admin Dashboard</span>
         </Link>
         <div className="hidden md:flex items-center gap-6">

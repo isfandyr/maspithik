@@ -70,9 +70,9 @@ export default function Menu({ session, limit = 6, addToCart }) {
         price: item.price
       });
       setQuantities(prev => ({ ...prev, [id]: 0 }));
-      toast.success(`${quantity} ${item.title}(s) added to cart`);
+      toast.success(`${quantity} ${item.title}(s) dimasukkan ke keranjang`);
     } else {
-      toast.error('Please select a quantity greater than 0');
+      toast.error('Silahkan pilih jumlah yang lebih dari 0');
     }
   };
 

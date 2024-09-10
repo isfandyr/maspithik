@@ -134,7 +134,7 @@ const MenuManagement = () => {
 
       console.log('Item added successfully:', data);
       setMenuItems([data, ...menuItems]);
-      toast.success('Item added successfully');
+      toast.success('Item berhasil ditambahkan');
       clearForm();
     } catch (error) {
       console.error('Error adding item:', error);
@@ -303,10 +303,10 @@ const MenuManagement = () => {
           className="input"
         >
           <option value="">Pilih Kategori</option>
-          <option value="Makanan">Makanan</option>
+          <option value="Makanan">Nasi Kucing</option>
           <option value="Minuman">Minuman</option>
-          <option value="Sate & Gorengan">Sate & Gorengan</option>
-          <option value="Jajanan">Jajanan</option>
+          <option value="Sate & Gorengan">Sate-satean</option>
+          <option value="Jajanan">Cemilan</option>
         </select>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -25,7 +25,7 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
 
   const handleRemoveItem = (id) => {
     removeFromCart(id);
-    toast.success('Item removed from cart');
+    toast.success('Menu berhasil dihapus dari keranjang');
   };
 
   const handleUpdateQuantity = (id, change) => {
