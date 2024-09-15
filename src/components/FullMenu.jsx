@@ -12,7 +12,7 @@ const FullMenu = ({ addToCart }) => {
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState({});
 
-  const categories = ['Nasi Kucing', 'Minuman', 'Sate-satean', 'Cemilan'];
+  const categories = ['Makanan', 'Minuman', 'Sate & Gorengan', 'Jajanan'];
 
   useEffect(() => {
     fetchMenuItems();

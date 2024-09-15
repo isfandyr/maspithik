@@ -201,7 +201,7 @@ const MenuManagement = () => {
       console.log('Item updated successfully:', data[0]);
       setMenuItems(menuItems.map(item => item.id === updatedItem.id ? data[0] : item));
       clearForm();
-      toast.success('Item updated successfully');
+      toast.success('Update Item Berhasil');
     } catch (error) {
       console.error('Error updating item:', error);
       toast.error(`Failed to update item: ${error.message}`);
@@ -221,7 +221,7 @@ const MenuManagement = () => {
         .eq('id', id);
       if (error) throw error;
       setMenuItems(menuItems.filter(item => item.id !== id));
-      toast.success('Item deleted successfully');
+      toast.success('Hapus Item Berhasil');
     } catch (error) {
       console.error('Error deleting item:', error);
       toast.error('Failed to delete item');
@@ -246,7 +246,7 @@ const MenuManagement = () => {
 
       if (data && data.length > 0) {
         setMenuItems(menuItems.map(item => item.id === id ? { ...item, status: newStatus } : item));
-        toast.success(`Item ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
+        toast.success(`Item ${newStatus === 'active' ? 'diaktifkan' : 'dinonaktifkan'} berhasil`);
       } else {
         throw new Error('Update operation did not affect any rows');
       }
@@ -303,10 +303,10 @@ const MenuManagement = () => {
           className="input"
         >
           <option value="">Pilih Kategori</option>
-          <option value="Makanan">Nasi Kucing</option>
+          <option value="Makanan">Makanan</option>
           <option value="Minuman">Minuman</option>
-          <option value="Sate & Gorengan">Sate-satean</option>
-          <option value="Jajanan">Cemilan</option>
+          <option value="Sate & Gorengan">Sate & Gorengan</option>
+          <option value="Jajanan">Jajanan</option>
         </select>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">

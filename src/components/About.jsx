@@ -33,12 +33,12 @@ export default function About() {
           <div className="order-1 md:order-2">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-4 sm:mb-6">Tentang Angkringan</h2>
             <p className="text-foreground mb-4 sm:mb-6 text-base sm:text-lg">
-              Angkringan adalah bisnis keluarga yang telah menyajikan masakan Indonesia autentik selama lebih dari 20
+              Angkringan Mas Pithik adalah bisnis keluarga yang telah menyajikan masakan Indonesia autentik selama kurang lebih 3
               tahun. Misi kami adalah membawa kekayaan rasa dan tradisi Indonesia ke komunitas lokal kami.
             </p>
             <p className="text-foreground mb-6 sm:mb-8 text-base sm:text-lg">
-              Tim koki dan pelayan kami yang berdedikasi bekerja tanpa lelah untuk memastikan setiap kunjungan ke Angkringan menjadi
-              pengalaman yang tak terlupakan. Kami bangga menggunakan bahan-bahan terbaik dan resep turun-temurun untuk
+              Tim Angkringan kami yang berdedikasi bekerja tanpa lelah untuk memastikan setiap kunjungan ke Angkringan menjadi
+              pengalaman yang tak terlupakan. Kami bangga menggunakan bahan-bahan terbaik untuk
               menciptakan hidangan lezat kami.
             </p>
             <Link

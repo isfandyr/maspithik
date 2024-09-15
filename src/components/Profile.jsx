@@ -57,7 +57,7 @@ const Profile = ({ isOpen, onClose, session }) => {
         });
 
       if (error) throw error;
-      toast.success('Profile updated successfully');
+      toast.success('Update Profile Berhasil');
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -101,7 +101,7 @@ const Profile = ({ isOpen, onClose, session }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
-                  Name
+                  Nama
                 </label>
                 <div className="relative">
                   <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -112,7 +112,7 @@ const Profile = ({ isOpen, onClose, session }) => {
                     value={profile?.name || ''}
                     onChange={handleInputChange}
                     className="w-full pl-10 pr-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Enter your name"
+                    placeholder="Masukkan nama"
                   />
                 </div>
               </div>
@@ -133,7 +133,7 @@ const Profile = ({ isOpen, onClose, session }) => {
               </div>
               <div>
                 <label htmlFor="phone_number" className="block text-sm font-medium text-foreground mb-1">
-                  Phone Number
+                  Nomor Telepon
                 </label>
                 <div className="relative">
                   <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -144,7 +144,7 @@ const Profile = ({ isOpen, onClose, session }) => {
                     value={profile?.phone_number || ''}
                     onChange={handleInputChange}
                     className="w-full pl-10 pr-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Enter your phone number"
+                    placeholder="Masukkan nomor telepon"
                   />
                 </div>
               </div>

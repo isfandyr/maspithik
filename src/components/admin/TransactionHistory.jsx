@@ -67,8 +67,8 @@ const TransactionHistory = () => {
         ID: transaction.id,
         Tanggal: new Date(transaction.created_at).toLocaleString(),
         Total: `Rp ${transaction.total_amount.toLocaleString()}`,
-        Status: transaction.status,
-        'Status Pembayaran': transaction.payment_status,
+        Status: getStatusInIndonesian(transaction.status),
+        'Status Pembayaran': getPaymentStatusInIndonesian(transaction.payment_status),
         'Metode Pembayaran': transaction.payment_method,
         'Email Pengguna': transaction.users?.email,
         'Item': transaction.order_items.map(item => `${item.menu_items?.title} (x${item.quantity})`).join(', ')
@@ -92,8 +92,8 @@ const TransactionHistory = () => {
         <h3 className="text-2xl font-bold mb-4">Detail Transaksi</h3>
         <p><strong>ID Pesanan:</strong> {transaction.id}</p>
         <p><strong>Tanggal:</strong> {new Date(transaction.created_at).toLocaleString()}</p>
-        <p><strong>Status:</strong> {transaction.status}</p>
-        <p><strong>Status Pembayaran:</strong> {transaction.payment_status}</p>
+        <p><strong>Status:</strong> {getStatusInIndonesian(transaction.status)}</p>
+        <p><strong>Status Pembayaran:</strong> {getPaymentStatusInIndonesian(transaction.payment_status)}</p>
         <p><strong>Metode Pembayaran:</strong> {transaction.payment_method}</p>
         <h4 className="font-bold mt-4 mb-2">Item:</h4>
         <ul>
@@ -210,8 +210,8 @@ const TransactionHistory = () => {
                 <td className="p-2">{transaction.id}</td>
                 <td className="p-2">{new Date(transaction.created_at).toLocaleString()}</td>
                 <td className="p-2">Rp {transaction.total_amount.toLocaleString()}</td>
-                <td className="p-2">{transaction.status}</td>
-                <td className="p-2">{transaction.payment_status}</td>
+                <td className="p-2">{getStatusInIndonesian(transaction.status)}</td>
+                <td className="p-2">{getPaymentStatusInIndonesian(transaction.payment_status)}</td>
                 <td className="p-2 flex">
                   <button
                     onClick={() => setSelectedTransaction(transaction)}
@@ -241,6 +241,34 @@ const TransactionHistory = () => {
       {selectedTransaction && showProofOfPayment && renderProofOfPayment(selectedTransaction)}
     </div>
   );
+};
+
+const getStatusInIndonesian = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'Menunggu';
+    case 'processing':
+      return 'Diproses';
+    case 'completed':
+      return 'Selesai';
+    case 'cancelled':
+      return 'Dibatalkan';
+    default:
+      return status;
+  }
+};
+
+const getPaymentStatusInIndonesian = (paymentStatus) => {
+  switch (paymentStatus) {
+    case 'pending':
+      return 'Menunggu';
+    case 'paid':
+      return 'Dibayar';
+    case 'failed':
+      return 'Gagal';
+    default:
+      return paymentStatus;
+  }
 };
 
 export default TransactionHistory;

@@ -59,16 +59,32 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
   const getPaymentStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case 'paid':
+      case 'dibayar':
         return 'text-green-500';
       case 'unpaid':
+      case 'belum dibayar':
         return 'text-red-500';
       case 'pending':
+      case 'menunggu':
         return 'text-yellow-500';
       default:
         return 'text-gray-500';
     }
   };
 
+  const getIndonesianStatus = (status) => {
+    const statusMap = {
+      'pending': 'Menunggu',
+      'processing': 'Diproses',
+      'completed': 'Selesai',
+      'cancelled': 'Dibatalkan',
+      'paid': 'Dibayar',
+      'unpaid': 'Belum Dibayar',
+      'failed': 'Gagal'
+    };
+    return statusMap[status.toLowerCase()] || status;
+  };
+  
   return (
     <AnimatePresence>
       {isOpen && (
@@ -109,7 +125,7 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
                     <div className="mb-2">
                       <span className="font-semibold">Status:</span>{' '}
                       <span className={`font-bold ${getStatusColor(transaction.status)}`}>
-                        {transaction.status}
+                        {getIndonesianStatus(transaction.status)}
                       </span>
                     </div>
                     <div className="mb-2">
@@ -118,7 +134,7 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
                     <div className="mb-2">
                       <span className="font-semibold">Status Pembayaran:</span>{' '}
                       <span className={`font-bold ${getPaymentStatusColor(transaction.payment_status)}`}>
-                        {transaction.payment_status}
+                        {getIndonesianStatus(transaction.payment_status)}
                       </span>
                     </div>
                     <div className="mb-2">

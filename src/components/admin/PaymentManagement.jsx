@@ -10,7 +10,7 @@ const PaymentManagement = () => {
   const [showProofOfPayment, setShowProofOfPayment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10; // Anda bisa menyesuaikan jumlah item per halaman
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchOrders();
@@ -62,6 +62,18 @@ const PaymentManagement = () => {
     }
   };
 
+  const getIndonesianStatus = (status) => {
+    const statusMap = {
+      'pending': 'Menunggu',
+      'processing': 'Diproses',
+      'completed': 'Selesai',
+      'cancelled': 'Dibatalkan',
+      'paid': 'Dibayar',
+      'failed': 'Gagal'
+    };
+    return statusMap[status] || status;
+  };
+
   const handleUpdatePaymentStatus = async (orderId, newStatus, userId) => {
     try {
       const { data, error } = await supabase
@@ -71,10 +83,9 @@ const PaymentManagement = () => {
         .single();
       if (error) throw error;
       setOrders(orders.map(order => order.id === orderId ? { ...order, payment_status: newStatus } : order));
-      toast.success(`Status pembayaran diperbarui menjadi ${newStatus}`);
+      toast.success(`Status pembayaran diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
       
-      // Send notification
-      await sendNotification(userId, `Status pembayaran untuk pesanan #${orderId} diperbarui menjadi ${newStatus}`);
+      await sendNotification(userId, `Status pembayaran untuk pesanan #${orderId} diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
     } catch (error) {
       console.error('Error updating payment status:', error);
       toast.error('Gagal memperbarui status pembayaran');
@@ -90,10 +101,9 @@ const PaymentManagement = () => {
         .single();
       if (error) throw error;
       setOrders(orders.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
-      toast.success(`Status pesanan diperbarui menjadi ${newStatus}`);
+      toast.success(`Status pesanan diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
       
-      // Send notification
-      await sendNotification(userId, `Status pesanan untuk pesanan #${orderId} diperbarui menjadi ${newStatus}`);
+      await sendNotification(userId, `Status pesanan untuk pesanan #${orderId} diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
     } catch (error) {
       console.error('Error updating order status:', error);
       toast.error('Gagal memperbarui status pesanan');
@@ -117,8 +127,8 @@ const PaymentManagement = () => {
         <h3 className="text-2xl font-bold mb-4">Detail Pesanan</h3>
         <p><strong>ID Pesanan:</strong> {order.id}</p>
         <p><strong>Tanggal:</strong> {new Date(order.created_at).toLocaleString()}</p>
-        <p><strong>Status:</strong> {order.status}</p>
-        <p><strong>Status Pembayaran:</strong> {order.payment_status}</p>
+        <p><strong>Status:</strong> {getIndonesianStatus(order.status)}</p>
+        <p><strong>Status Pembayaran:</strong> {getIndonesianStatus(order.payment_status)}</p>
         <p><strong>Metode Pembayaran:</strong> {order.payment_method}</p>
         <h4 className="font-bold mt-4 mb-2">Item:</h4>
         {order.order_items && order.order_items.length > 0 ? (
@@ -237,7 +247,7 @@ const PaymentManagement = () => {
                     onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value, order.user_id)}
                     className="border rounded p-1"
                   >
-                    <option value="pending">Pending</option>
+                    <option value="pending">Menunggu</option>
                     <option value="processing">Diproses</option>
                     <option value="completed">Selesai</option>
                     <option value="cancelled">Dibatalkan</option>
@@ -249,7 +259,7 @@ const PaymentManagement = () => {
                     onChange={(e) => handleUpdatePaymentStatus(order.id, e.target.value, order.user_id)}
                     className="border rounded p-1"
                   >
-                    <option value="pending">Pending</option>
+                    <option value="pending">Menunggu</option>
                     <option value="paid">Dibayar</option>
                     <option value="failed">Gagal</option>
                   </select>
