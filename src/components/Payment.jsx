@@ -22,6 +22,7 @@ const Payment = ({ isOpen, onClose, orderId, totalAmount }) => {
     }
   }, [isOpen, orderId, totalAmount]);
 
+  // Mengambil metode pembayaran yang tersedia dari database
   const fetchPaymentMethods = async () => {
     const { data, error } = await supabase
       .from('payment_methods')
@@ -70,6 +71,7 @@ const Payment = ({ isOpen, onClose, orderId, totalAmount }) => {
     }
   };
 
+   // Mengambil data akun bank dari database
   const fetchBankAccounts = async () => {
     const { data, error } = await supabase
       .from('bank_accounts')
@@ -81,6 +83,7 @@ const Payment = ({ isOpen, onClose, orderId, totalAmount }) => {
     }
   };
 
+  // Mengambil kode QRIS dari database
   const fetchQrisCode = async () => {
     const { data, error } = await supabase
       .from('qris_codes')
@@ -125,6 +128,7 @@ const Payment = ({ isOpen, onClose, orderId, totalAmount }) => {
         proofUrl = data.path;
       }
 
+      // Mengupdate status pembayaran pada tabel 'orders'
       const { error } = await supabase
         .from('orders')
         .update({

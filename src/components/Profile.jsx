@@ -4,10 +4,13 @@ import { FiX, FiSave, FiUser, FiPhone, FiMail } from 'react-icons/fi';
 import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
 
+
 const Profile = ({ isOpen, onClose, session }) => {
+ 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  
   const fetchProfile = useCallback(async () => {
     if (!session || !session.user) {
       setLoading(false);
@@ -66,6 +69,7 @@ const Profile = ({ isOpen, onClose, session }) => {
       setLoading(false);
     }
   };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

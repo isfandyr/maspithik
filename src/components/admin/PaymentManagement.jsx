@@ -25,6 +25,7 @@ const PaymentManagement = () => {
     return null;
   };
 
+  // Fungsi untuk mengambil data pesanan dari database
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -74,6 +75,7 @@ const PaymentManagement = () => {
     return statusMap[status] || status;
   };
 
+   // mengupdate status pembayaran
   const handleUpdatePaymentStatus = async (orderId, newStatus, userId) => {
     try {
       const { data, error } = await supabase
@@ -92,6 +94,7 @@ const PaymentManagement = () => {
     }
   };
 
+   // mengupdate status pesanan
   const handleUpdateOrderStatus = async (orderId, newStatus, userId) => {
     try {
       const { data, error } = await supabase
@@ -103,6 +106,7 @@ const PaymentManagement = () => {
       setOrders(orders.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
       toast.success(`Status pesanan diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
       
+      // Kirim notifikasi kepada user
       await sendNotification(userId, `Status pesanan untuk pesanan #${orderId} diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -110,6 +114,7 @@ const PaymentManagement = () => {
     }
   };
 
+  // mengirim notifikasi
   const sendNotification = async (userId, message) => {
     try {
       const { data, error } = await supabase

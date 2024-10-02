@@ -32,6 +32,7 @@ const AdminOverview = () => {
   const [topMenuItems, setTopMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
+  // Mengambil data dari Supabase
   const fetchWithRetry = async (fetcher, maxRetries = 3) => {
     for (let i = 0; i < maxRetries; i++) {
       try {
@@ -54,27 +55,27 @@ const AdminOverview = () => {
       setLoading(true);
       setError(null);
       
-      // Fetch total revenue
+      
       const { data: revenueData } = await fetchWithRetry(() => 
         supabase.from('orders').select('total_amount').eq('payment_status', 'paid')
       );
       const revenue = revenueData.reduce((sum, order) => sum + order.total_amount, 0);
       setTotalRevenue(revenue);
 
-      // Fetch total items sold
+      // Mengambil total item yang terjual dari tabel order_items
       const { data: itemsData } = await fetchWithRetry(() => 
         supabase.from('order_items').select('quantity')
       );
       const itemsSold = itemsData.reduce((sum, item) => sum + item.quantity, 0);
       setTotalItemsSold(itemsSold);
 
-      // Fetch total users
+      // Mengambil jumlah total pengguna dari tabel profiles
       const { count: usersCount } = await fetchWithRetry(() => 
         supabase.from('profiles').select('id', { count: 'exact', head: true })
       );
       setTotalUsers(usersCount);
 
-      // Fetch active orders
+      
       const { count: ordersCount } = await fetchWithRetry(() => 
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       );
@@ -89,6 +90,7 @@ const AdminOverview = () => {
     }
   };
 
+   // Mengambil data pendapatan harian untuk ditampilkan di grafik
   const fetchDailyRevenue = async () => {
     try {
       const { data, error } = await fetchWithRetry(() => 
@@ -97,6 +99,7 @@ const AdminOverview = () => {
 
       if (error) throw error;
 
+      // Mengelompokkan pendapatan berdasarkan tanggal
       const dailyData = data.reduce((acc, order) => {
         const date = new Date(order.created_at).toLocaleDateString();
         acc[date] = (acc[date] || 0) + order.total_amount;
@@ -131,6 +134,7 @@ const AdminOverview = () => {
     }
   };
 
+  // Data untuk grafik pendapatan harian
   const revenueChartData = {
     labels: dailyRevenue.map(item => item.date),
     datasets: [

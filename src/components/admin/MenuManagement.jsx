@@ -40,6 +40,7 @@ const MenuManagement = () => {
     }
   };
 
+  // Mengambil data item menu dari database
   const fetchMenuItems = async () => {
     try {
       setLoading(true);
@@ -62,6 +63,7 @@ const MenuManagement = () => {
     setImageFile(file);
   };
 
+  // Mengunggah gambar ke penyimpanan di Supabase
   const uploadImage = async (file) => {
     try {
       const fileExt = file.name.split('.').pop();
@@ -228,6 +230,8 @@ const MenuManagement = () => {
     }
   };
 
+
+  // Mengubah status item (active/draft)
   const handleToggleStatus = async (id, currentStatus) => {
     if (!isAdmin) {
       toast.error('Only admin can change item status');

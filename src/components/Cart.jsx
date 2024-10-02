@@ -40,6 +40,7 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
     window.dispatchEvent(new Event('storage'));
   };
 
+   // Membuat pesanan baru dan mengirimkan data ke Supabase
   const handleOrder = async () => {
     if (!session) {
       openLoginModal();
@@ -47,7 +48,7 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
     }
 
     try {
-      // Create a new order
+      // Menambahkan pesanan baru ke tabel 'orders'
       const { data, error } = await supabase
         .from('orders')
         .insert({
@@ -60,7 +61,7 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
 
       if (error) throw error;
 
-      // Move cart items to order_items
+      // Menambahkan detail item pesanan ke tabel 'order_items'
       const orderItems = cartItems.map(item => ({
         order_id: data.id,
         menu_item_id: item.menu_item_id,
@@ -74,18 +75,19 @@ const Cart = ({ isOpen, onClose, openLoginModal, session, cartItems, removeFromC
 
       if (orderItemsError) throw orderItemsError;
 
-      // Clear the cart
+      
       clearCart();
 
       setOrderId(data.id);
       setIsPaymentOpen(true);
-      onClose(); // Close the cart modal
+      onClose(); 
     } catch (error) {
       console.error('Error creating order:', error);
       toast.error('Failed to create order');
     }
   };
 
+  // Mengarahkan pengguna untuk melihat menu lengkap
   const handleViewMenu = () => {
     onClose();
     navigate('/fullmenu');

@@ -26,6 +26,7 @@ const TransactionHistory = () => {
     return null;
   };
 
+  // mengambil data transaksi dari database Supabase
   const fetchTransactions = async () => {
     try {
       setLoading(true);
@@ -52,6 +53,7 @@ const TransactionHistory = () => {
     }
   };
 
+  // mengunduh semua data transaksi dalam bentuk file Excel
   const downloadAllTransactions = async () => {
     try {
       setLoading(true);
