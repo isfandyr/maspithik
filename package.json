@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
+    "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@supabase/supabase-js": "^2.45.1",

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Element } from "react-scroll";
 import { motion } from "framer-motion";
 import { FiSend } from "react-icons/fi";
-import emailjs from 'emailjs-com';
+import emailjs from '@emailjs/browser';
 import toast from 'react-hot-toast';
 
 export default function Contact() {
