@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiX } from 'react-icons/fi';
 import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
+import InvoiceDownload from './InvoiceDownload';
 
 const TransactionHistory = ({ isOpen, onClose, session }) => {
   const [transactions, setTransactions] = useState([]);
@@ -147,8 +148,13 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
                         ))}
                       </ul>
                     </div>
-                    <div className="font-semibold text-right">
-                      Total: Rp {transaction.total_amount.toLocaleString()}
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="font-semibold">
+                        Total: Rp {transaction.total_amount.toLocaleString()}
+                      </div>
+                      {transaction.status.toLowerCase() === 'completed' && (
+                        <InvoiceDownload transaction={transaction} />
+                      )}
                     </div>
                   </div>
                 ))}
