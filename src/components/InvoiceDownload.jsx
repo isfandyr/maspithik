@@ -16,11 +16,12 @@ const styles = StyleSheet.create({
   infoTextRed: { fontSize: 13, marginBottom: '0.5%', color: '#FF0000', fontWeight: 'bold' },
   table: { display: 'table', width: '100%', borderStyle: 'solid', borderColor: '#000000', borderWidth: 1, borderRightWidth: 0, borderBottomWidth: 0, marginBottom: '2%' },
   tableRow: { margin: 'auto', flexDirection: 'row', borderBottomColor: '#000000', borderBottomWidth: 1 },
-  tableHeader: { backgroundColor: '#ffffff' },
+  tableHeader: { backgroundColor: '#E0E0E0' },
   tableCol: { width: '25%', borderStyle: 'solid', borderColor: '#000000', borderWidth: 1, borderLeftWidth: 0, borderTopWidth: 0 },
   tableCell: { margin: 'auto', marginTop: '0.5%', marginBottom: '0.5%', fontSize: 12, color: '#000000', fontWeight: 'bold' },
   total: { fontSize: 18, fontWeight: 'bold', textAlign: 'right', marginTop: '1%', color: '#000000' },
-  footer: { position: 'absolute', bottom: '2%', left: '5%', right: '5%', textAlign: 'center', color: '#000000', fontSize: 11, fontWeight: 'bold' }
+  footer: { position: 'absolute', bottom: '2%', left: '5%', right: '5%', textAlign: 'center', color: '#000000', fontSize: 11, fontWeight: 'bold' },
+  note: { marginTop: '2%', fontSize: 12, fontStyle: 'italic', color: '#000000' }
 });
 
 // Fungsi untuk menerjemahkan status
@@ -79,6 +80,10 @@ const InvoicePDF = ({ transaction }) => (
       
       <Text style={styles.total}>
         Total: Rp {transaction.total_amount.toLocaleString('id-ID')}
+      </Text>
+      
+      <Text style={styles.note}>
+        Catatan: Tunjukkan bukti pembayaran ini ke admin Angkringan Mas Pithik.
       </Text>
       
       <Text style={styles.footer}>
