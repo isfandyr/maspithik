@@ -1,27 +1,28 @@
 import React from 'react';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { FiDownload } from 'react-icons/fi';
+import { Tooltip } from 'react-tooltip';
 
 // Definisikan styles untuk PDF
 const styles = StyleSheet.create({
-  page: { padding: '5%', fontFamily: 'Helvetica' },
-  header: { marginBottom: '2%', alignItems: 'center' },
-  logo: { width: '30%', maxWidth: 120, marginBottom: '1%', alignSelf: 'center' },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginBottom: '1%' },
-  subtitle: { fontSize: 22, marginBottom: '2%', color: '#00008B', fontWeight: 'bold', textAlign: 'center' },
-  infoContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '2%' },
-  infoColumn: { width: '48%', marginBottom: '1%' },
-  infoTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: '0.5%', color: '#000000' },
-  infoText: { fontSize: 13, marginBottom: '0.5%', color: '#000000', fontWeight: 'bold' },
-  infoTextRed: { fontSize: 13, marginBottom: '0.5%', color: '#FF0000', fontWeight: 'bold' },
-  table: { display: 'table', width: '100%', borderStyle: 'solid', borderColor: '#000000', borderWidth: 1, borderRightWidth: 0, borderBottomWidth: 0, marginBottom: '2%' },
-  tableRow: { margin: 'auto', flexDirection: 'row', borderBottomColor: '#000000', borderBottomWidth: 1 },
-  tableHeader: { backgroundColor: '#E0E0E0' },
-  tableCol: { width: '25%', borderStyle: 'solid', borderColor: '#000000', borderWidth: 1, borderLeftWidth: 0, borderTopWidth: 0 },
-  tableCell: { margin: 'auto', marginTop: '0.5%', marginBottom: '0.5%', fontSize: 12, color: '#000000', fontWeight: 'bold' },
-  total: { fontSize: 18, fontWeight: 'bold', textAlign: 'right', marginTop: '1%', color: '#000000' },
-  footer: { position: 'absolute', bottom: '2%', left: '5%', right: '5%', textAlign: 'center', color: '#000000', fontSize: 11, fontWeight: 'bold' },
-  note: { marginTop: '2%', fontSize: 12, fontStyle: 'italic', color: '#000000' }
+  page: { padding: '5%', fontFamily: 'Helvetica', backgroundColor: '#F8F8F8' },
+  header: { marginBottom: '5%', alignItems: 'center', borderBottom: '2 solid #000000', paddingBottom: '3%' },
+  logo: { width: '30%', maxWidth: 120, marginBottom: '2%', alignSelf: 'center' },
+  title: { fontSize: 28, fontWeight: 'bold', color: '#1A1A1A', textAlign: 'center', marginBottom: '1%' },
+  subtitle: { fontSize: 22, marginBottom: '3%', color: '#3D3D3D', fontWeight: 'bold', textAlign: 'center' },
+  infoContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '5%', backgroundColor: '#FFFFFF', padding: '3%', borderRadius: 8 },
+  infoColumn: { width: '48%', marginBottom: '2%' },
+  infoTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: '2%', color: '#1A1A1A', borderBottom: '1 solid #CCCCCC', paddingBottom: '2%' },
+  infoText: { fontSize: 13, marginBottom: '1%', color: '#3D3D3D' },
+  infoTextHighlight: { fontSize: 13, marginBottom: '1%', color: '#0066CC', fontWeight: 'bold' },
+  table: { display: 'table', width: '100%', borderStyle: 'solid', borderColor: '#CCCCCC', borderWidth: 1, borderRightWidth: 0, borderBottomWidth: 0, marginBottom: '5%' },
+  tableRow: { margin: 'auto', flexDirection: 'row', borderBottomColor: '#CCCCCC', borderBottomWidth: 1 },
+  tableHeader: { backgroundColor: '#E6E6E6' },
+  tableCol: { width: '25%', borderStyle: 'solid', borderColor: '#CCCCCC', borderWidth: 1, borderLeftWidth: 0, borderTopWidth: 0 },
+  tableCell: { margin: 'auto', marginTop: '2%', marginBottom: '2%', fontSize: 12, color: '#3D3D3D' },
+  total: { fontSize: 18, fontWeight: 'bold', textAlign: 'right', marginTop: '3%', color: '#1A1A1A', backgroundColor: '#E6E6E6', padding: '2%', borderRadius: 4 },
+  footer: { position: 'absolute', bottom: '5%', left: '5%', right: '5%', textAlign: 'center', color: '#666666', fontSize: 11, borderTop: '1 solid #CCCCCC', paddingTop: '2%' },
+  note: { marginTop: '5%', fontSize: 12, fontStyle: 'italic', color: '#666666', backgroundColor: '#FFFFFF', padding: '2%', borderRadius: 4 }
 });
 
 // Fungsi untuk menerjemahkan status
@@ -43,30 +44,30 @@ const InvoicePDF = ({ transaction }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Image style={styles.logo} src="/path/to/your/logo.png" />
-        <Text style={styles.title}>Transaksi Angkringan Mas Pithik</Text>
+        <Text style={styles.title}>Angkringan Mas Pithik</Text>
+        <Text style={styles.subtitle}>Invoice Pesanan #{transaction.id}</Text>
       </View>
-      
-      <Text style={styles.subtitle}>Pesanan #{transaction.id}</Text>
       
       <View style={styles.infoContainer}>
         <View style={styles.infoColumn}>
-          <Text style={styles.infoTitle}>Informasi Pesanan:</Text>
-          <Text style={styles.infoText}>Tanggal: <Text style={styles.infoTextRed}>{new Date(transaction.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</Text></Text>
-          <Text style={styles.infoText}>Status Pesanan: <Text style={styles.infoTextRed}>{terjemahkanStatus(transaction.status)}</Text></Text>
+          <Text style={styles.infoTitle}>Informasi Pesanan</Text>
+          <Text style={styles.infoText}>Tanggal: <Text style={styles.infoTextHighlight}>{new Date(transaction.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</Text></Text>
+          <Text style={styles.infoText}>Status: <Text style={styles.infoTextHighlight}>{terjemahkanStatus(transaction.status)}</Text></Text>
+          <Text style={styles.infoText}>Nama Pemesan: <Text style={styles.infoTextHighlight}>{transaction.users?.name || 'Tidak diketahui'}</Text></Text>
         </View>
         <View style={styles.infoColumn}>
-          <Text style={styles.infoTitle}>Informasi Pembayaran:</Text>
-          <Text style={styles.infoText}>Metode: <Text style={styles.infoTextRed}>{transaction.payment_method}</Text></Text>
-          <Text style={styles.infoText}>Status Pembayaran: <Text style={styles.infoTextRed}>{terjemahkanStatus(transaction.payment_status)}</Text></Text>
+          <Text style={styles.infoTitle}>Informasi Pembayaran</Text>
+          <Text style={styles.infoText}>Metode: <Text style={styles.infoTextHighlight}>{transaction.payment_method}</Text></Text>
+          <Text style={styles.infoText}>Status: <Text style={styles.infoTextHighlight}>{terjemahkanStatus(transaction.payment_status)}</Text></Text>
         </View>
       </View>
       
       <View style={styles.table}>
         <View style={[styles.tableRow, styles.tableHeader]}>
-          <View style={styles.tableCol}><Text style={styles.tableCell}>Item</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCell}>Jumlah</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCell}>Harga</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCell}>Total</Text></View>
+          <View style={styles.tableCol}><Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Item</Text></View>
+          <View style={styles.tableCol}><Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Jumlah</Text></View>
+          <View style={styles.tableCol}><Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Harga</Text></View>
+          <View style={styles.tableCol}><Text style={[styles.tableCell, { fontWeight: 'bold' }]}>Total</Text></View>
         </View>
         {transaction.order_items.map((item, index) => (
           <View style={styles.tableRow} key={index}>
@@ -87,32 +88,36 @@ const InvoicePDF = ({ transaction }) => (
       </Text>
       
       <Text style={styles.footer}>
-        Terima kasih telah mampir di Angkringan Mas Pithik.
+        Terima kasih telah mampir di Angkringan Mas Pithik. Kami menantikan kunjungan Anda kembali!
       </Text>
     </Page>
   </Document>
 );
 
-const InvoiceDownload = ({ transaction }) => {
+const InvoiceDownload = ({ transaction, tooltipId, tooltipContent }) => {
   return (
-    <PDFDownloadLink
-      document={<InvoicePDF transaction={transaction} />}
-      fileName={`transaksi_angkringan_mas_pithik_${transaction.id}.pdf`}
-    >
-      {({ blob, url, loading, error }) => (
-        <button
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition duration-300 text-sm sm:text-base"
-        >
-          {loading ? 'Menyiapkan Transaksi....' : (
-            <>
-              Unduh Transaksi
-              <FiDownload className="ml-2" />
-            </>
-          )}
-        </button>
-      )}
-    </PDFDownloadLink>
+    <>
+      <PDFDownloadLink
+        document={<InvoicePDF transaction={transaction} />}
+        fileName={`transaksi_angkringan_mas_pithik_${transaction.id}.pdf`}
+      >
+        {({ blob, url, loading, error }) => (
+          <button
+            disabled={loading}
+            className="text-black font-bold py-2 px-4 rounded inline-flex items-center transition duration-300 text-sm sm:text-base"
+            data-tooltip-id={tooltipId}
+            data-tooltip-content={tooltipContent}
+          >
+            {loading ? 'Menyiapkan Transaksi....' : (
+              <>
+                <FiDownload className="ml-2" />
+              </>
+            )}
+          </button>
+        )}
+      </PDFDownloadLink>
+      <Tooltip id={tooltipId} />
+    </>
   );
 };
 

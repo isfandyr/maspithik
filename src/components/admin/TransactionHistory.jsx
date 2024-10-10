@@ -32,7 +32,7 @@ const TransactionHistory = () => {
       setLoading(true);
       const { data, error, count } = await supabase
         .from('orders')
-        .select('*, order_items(*, menu_items(title)), users(email), proof_of_payment_url', { count: 'exact' })
+        .select('*, order_items(*, menu_items(title)), users(email, name), proof_of_payment_url', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1);
 
@@ -94,6 +94,8 @@ const TransactionHistory = () => {
         <h3 className="text-2xl font-bold mb-4">Detail Transaksi</h3>
         <p><strong>ID Pesanan:</strong> {transaction.id}</p>
         <p><strong>Tanggal:</strong> {new Date(transaction.created_at).toLocaleString()}</p>
+        <p><strong>Nama Pelanggan:</strong> {transaction.users?.name || 'Tidak diketahui'}</p>
+        <p><strong>Email Pelanggan:</strong> {transaction.users?.email || 'Tidak diketahui'}</p>
         <p><strong>Status:</strong> {getStatusInIndonesian(transaction.status)}</p>
         <p><strong>Status Pembayaran:</strong> {getPaymentStatusInIndonesian(transaction.payment_status)}</p>
         <p><strong>Metode Pembayaran:</strong> {transaction.payment_method}</p>
