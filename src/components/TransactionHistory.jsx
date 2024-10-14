@@ -223,7 +223,7 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
               <div className="p-6 space-y-4">
                 <div className="text-center">
                   <h3 className="text-3xl font-bold text-primary mb-2">ID Pesanan</h3>
-                  <p className="text-4xl font-bold">{selectedTransaction.id}</p>
+                  <p className="text-9xl font-bold">{selectedTransaction.id}</p>
                 </div>
                 
                 <div className="border-t border-b border-gray-200 py-4">

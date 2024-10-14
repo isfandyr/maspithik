@@ -14,6 +14,12 @@ const Footer = ({ scrollToSection, homeRef, aboutRef, menuRef, contactRef }) => 
     }
   };
 
+  const handleFindLocation = () => {
+    const address = "Angkringan mas pithik Komplek Reni Jaya Blok AA 1 no. 1, Jalan Flamboyan Raya, Pamulang, Tangerang Selatan";
+    const encodedAddress = encodeURIComponent(address);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+  };
+
   return (
     <footer className="bg-black text-white py-8">
       <div className="container mx-auto px-4">
@@ -25,9 +31,11 @@ const Footer = ({ scrollToSection, homeRef, aboutRef, menuRef, contactRef }) => 
           </div>
           <div>
             <h3 className="text-xl font-bold mb-4">Alamat</h3>
-            <p>Komplek Reni Jaya Blok AA 1 no. 1</p>
-            <p>Jalan Flamboyan Raya</p>
-            <p>Pamulang, Tangerang Selatan</p>
+            <p className="cursor-pointer hover:underline" onClick={handleFindLocation}>
+              Komplek Reni Jaya Blok AA 1 no. 1<br />
+              Jalan Flamboyan Raya<br />
+              Pamulang, Tangerang Selatan
+            </p>
           </div>
           <div>
             <h3 className="text-xl font-bold mb-4">Konten</h3>
