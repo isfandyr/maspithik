@@ -12,6 +12,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 ChartJS.register(
   CategoryScale,
@@ -25,12 +27,15 @@ ChartJS.register(
 const AdminOverview = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalItemsSold, setTotalItemsSold] = useState(0);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [activeOrders, setActiveOrders] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dailyRevenue, setDailyRevenue] = useState([]);
   const [topMenuItems, setTopMenuItems] = useState([]);
   const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 1)));
+  const [endDate, setEndDate] = useState(new Date());
+  const [filterType, setFilterType] = useState('daily');
+  const [filteredRevenue, setFilteredRevenue] = useState(0);
 
   // Mengambil data dari Supabase
   const fetchWithRetry = async (fetcher, maxRetries = 3) => {
@@ -69,13 +74,8 @@ const AdminOverview = () => {
       const itemsSold = itemsData.reduce((sum, item) => sum + item.quantity, 0);
       setTotalItemsSold(itemsSold);
 
-      // Mengambil jumlah total pengguna dari tabel profiles
-      const { count: usersCount } = await fetchWithRetry(() => 
-        supabase.from('profiles').select('id', { count: 'exact', head: true })
-      );
-      setTotalUsers(usersCount);
+      // Menghapus bagian yang mengambil jumlah total pengguna
 
-      
       const { count: ordersCount } = await fetchWithRetry(() => 
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       );
@@ -90,28 +90,45 @@ const AdminOverview = () => {
     }
   };
 
-   // Mengambil data pendapatan harian untuk ditampilkan di grafik
+   // Mengambil data pendapatan untuk ditampilkan di grafik
   const fetchDailyRevenue = async () => {
     try {
       const { data, error } = await fetchWithRetry(() => 
-        supabase.from('orders').select('created_at, total_amount').eq('payment_status', 'paid').order('created_at', { ascending: true })
+        supabase
+          .from('orders')
+          .select('created_at, total_amount')
+          .eq('payment_status', 'paid')
+          .gte('created_at', startDate.toISOString())
+          .lte('created_at', endDate.toISOString())
+          .order('created_at', { ascending: true })
       );
 
       if (error) throw error;
 
-      // Mengelompokkan pendapatan berdasarkan tanggal
-      const dailyData = data.reduce((acc, order) => {
-        const date = new Date(order.created_at).toLocaleDateString();
-        acc[date] = (acc[date] || 0) + order.total_amount;
+      // Mengelompokkan pendapatan berdasarkan tanggal atau bulan
+      const groupedData = data.reduce((acc, order) => {
+        const date = new Date(order.created_at);
+        const key = filterType === 'daily' 
+          ? date.toLocaleDateString() 
+          : `${date.getFullYear()}-${date.getMonth() + 1}`;
+        acc[key] = (acc[key] || 0) + order.total_amount;
         return acc;
       }, {});
 
-      setDailyRevenue(Object.entries(dailyData).map(([date, amount]) => ({ date, amount })));
+      setDailyRevenue(Object.entries(groupedData).map(([date, amount]) => ({ date, amount })));
+      
+      // Menghitung total pendapatan untuk periode yang dipilih
+      const totalFilteredRevenue = Object.values(groupedData).reduce((sum, amount) => sum + amount, 0);
+      setFilteredRevenue(totalFilteredRevenue);
     } catch (error) {
       console.error('Error fetching daily revenue:', error);
-      toast.error('Gagal memuat data pendapatan harian');
+      toast.error('Gagal memuat data pendapatan');
     }
   };
+
+  useEffect(() => {
+    fetchDailyRevenue();
+  }, [startDate, endDate, filterType]);
 
   const fetchTopMenuItems = async () => {
     try {
@@ -139,10 +156,10 @@ const AdminOverview = () => {
     labels: dailyRevenue.map(item => item.date),
     datasets: [
       {
-        label: 'Pendapatan Harian',
+        label: 'Pendapatan',
         data: dailyRevenue.map(item => item.amount),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        borderColor: 'rgb(0, 0, 0)',
         borderWidth: 1
       }
     ]
@@ -170,7 +187,7 @@ const AdminOverview = () => {
               <p className="text-lg font-semibold">Total Pendapatan</p>
               <p className="text-3xl font-bold">Rp {totalRevenue.toLocaleString()}</p>
             </div>
-            <FiDollarSign className="text-4xl text-green-500" />
+            <FiDollarSign className="text-4xl text-black" />
           </div>
         </div>
         <div className="bg-card p-6 rounded-lg shadow-md">
@@ -179,16 +196,7 @@ const AdminOverview = () => {
               <p className="text-lg font-semibold">Item Terjual</p>
               <p className="text-3xl font-bold">{totalItemsSold}</p>
             </div>
-            <FiShoppingBag className="text-4xl text-blue-500" />
-          </div>
-        </div>
-        <div className="bg-card p-6 rounded-lg shadow-md">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-semibold">Total Pengguna</p>
-              <p className="text-3xl font-bold">{totalUsers}</p>
-            </div>
-            <FiUsers className="text-4xl text-yellow-500" />
+            <FiShoppingBag className="text-4xl text-black" />
           </div>
         </div>
         <div className="bg-card p-6 rounded-lg shadow-md">
@@ -197,13 +205,49 @@ const AdminOverview = () => {
               <p className="text-lg font-semibold">Pesanan Aktif</p>
               <p className="text-3xl font-bold">{activeOrders}</p>
             </div>
-            <FiActivity className="text-4xl text-red-500" />
+            <FiActivity className="text-4xl text-black" />
+          </div>
+        </div>
+        <div className="bg-card p-6 rounded-lg shadow-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-semibold">Pendapatan Terakhir</p>
+              <p className="text-3xl font-bold">Rp {filteredRevenue.toLocaleString()}</p>
+            </div>
+            <FiDollarSign className="text-4xl text-black" />
           </div>
         </div>
       </div>
 
       <div className="bg-card p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Grafik Pendapatan Harian</h2>
+        <h2 className="text-xl font-semibold mb-4">Grafik Pendapatan</h2>
+        <div className="flex space-x-4 mb-4">
+          <DatePicker
+            selected={startDate}
+            onChange={date => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            className="p-2 border rounded"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={date => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            className="p-2 border rounded"
+          />
+          <select
+            value={filterType}
+            onChange={e => setFilterType(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="daily">Harian</option>
+            <option value="monthly">Bulanan</option>
+          </select>
+        </div>
         <div style={{ height: '300px' }}>
           <Bar data={revenueChartData} options={chartOptions} />
         </div>

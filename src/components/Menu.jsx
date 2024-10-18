@@ -51,7 +51,12 @@ export default function Menu({ session, limit = 6, addToCart }) {
   };
 
   const handleIncrement = (id) => {
-    setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
+    const item = menuItems.find(item => item.id === id);
+    if (item && quantities[id] < item.stock) {
+      setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
+    } else {
+      toast.error('Stok tidak mencukupi');
+    }
   };
 
   const handleDecrement = (id) => {
@@ -111,6 +116,7 @@ export default function Menu({ session, limit = 6, addToCart }) {
                 <h3 className="text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
                 <p className="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4 flex-grow">{item.description}</p>
                 <p className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Rp {item.price.toLocaleString()}</p>
+                <p className="text-sm text-gray-300 mb-2">Stok: {item.stock}</p>
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center space-x-2">
                     <button 
@@ -122,14 +128,20 @@ export default function Menu({ session, limit = 6, addToCart }) {
                     <span className="font-bold text-sm sm:text-base">{quantities[item.id]}</span>
                     <button 
                       onClick={() => handleIncrement(item.id)}
-                      className="bg-white text-black rounded-full p-1 hover:bg-gray-200 transition-colors duration-200"
+                      className={`bg-white text-black rounded-full p-1 transition-colors duration-200 ${
+                        quantities[item.id] >= item.stock ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                      }`}
+                      disabled={quantities[item.id] >= item.stock}
                     >
                       <FiPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                   </div>
                   <button 
                     onClick={() => handleAddToCart(item.id)}
-                    className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-gray-200 transition-colors duration-200 text-sm sm:text-base"
+                    className={`flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 py-1 sm:px-4 sm:py-2 rounded-full transition-colors duration-200 text-sm sm:text-base ${
+                      quantities[item.id] === 0 || quantities[item.id] > item.stock ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                    }`}
+                    disabled={quantities[item.id] === 0 || quantities[item.id] > item.stock}
                   >
                     <FiShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>

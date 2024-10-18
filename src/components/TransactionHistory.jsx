@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiEye } from 'react-icons/fi';
 import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
 import InvoiceDownload from './InvoiceDownload';
@@ -8,6 +8,7 @@ import InvoiceDownload from './InvoiceDownload';
 const TransactionHistory = ({ isOpen, onClose, session }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   useEffect(() => {
     if (session && isOpen) {
@@ -85,7 +86,15 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
     };
     return statusMap[status.toLowerCase()] || status;
   };
-  
+
+  const openTransactionModal = (transaction) => {
+    setSelectedTransaction(transaction);
+  };
+
+  const closeTransactionModal = () => {
+    setSelectedTransaction(null);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -152,9 +161,20 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
                       <div className="font-semibold">
                         Total: Rp {transaction.total_amount.toLocaleString()}
                       </div>
-                      {transaction.status.toLowerCase() === 'completed' && (
-                        <InvoiceDownload transaction={transaction} />
-                      )}
+                      <div className="flex space-x-2">
+                        {transaction.status.toLowerCase() === 'completed' && (
+                          <>
+                            <button
+                              onClick={() => openTransactionModal(transaction)}
+                              className="text-primary hover:text-primary-dark"
+                              title="Lihat Detail"
+                            >
+                              <FiEye size={20} />
+                            </button>
+                            <InvoiceDownload transaction={transaction} />
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -163,6 +183,65 @@ const TransactionHistory = ({ isOpen, onClose, session }) => {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Modal untuk menampilkan detail transaksi */}
+      <AnimatePresence>
+        {selectedTransaction && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={closeTransactionModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 space-y-4">
+                <div className="text-center">
+                  <h3 className="text-3xl font-bold text-primary mb-2">ID Pesanan</h3>
+                  <p className="text-4xl font-bold">{selectedTransaction.id}</p>
+                </div>
+                
+                <div className="border-t border-b border-gray-200 py-4">
+                  <p className="font-semibold mb-2">Metode Pembayaran:</p>
+                  <p className="text-lg">{selectedTransaction.payment_method}</p>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-2">Item Pesanan:</h4>
+                  <div className="space-y-2">
+                    {selectedTransaction.order_items.map((item, index) => (
+                      <div key={index} className="flex justify-between items-center text-sm">
+                        <span>{item.menu_items.title} x{item.quantity}</span>
+                        <span>Rp {item.price.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between items-center text-xl font-bold">
+                    <span>Total:</span>
+                    <span>Rp {selectedTransaction.total_amount.toLocaleString()}</span>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={closeTransactionModal}
+                  className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition duration-300"
+                >
+                  Tutup
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 };

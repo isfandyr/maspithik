@@ -101,8 +101,23 @@ const PaymentManagement = () => {
         .from('orders')
         .update({ status: newStatus })
         .eq('id', orderId)
+        .select(`
+          *,
+          order_items (
+            id,
+            menu_item_id,
+            quantity
+          )
+        `)
         .single();
+
       if (error) throw error;
+
+      // Jika status baru adalah 'processing' atau 'completed', kurangi stok
+      if (newStatus === 'processing' || newStatus === 'completed') {
+        await reduceStock(data.order_items);
+      }
+
       setOrders(orders.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
       toast.success(`Status pesanan diperbarui menjadi ${getIndonesianStatus(newStatus)}`);
       
@@ -123,6 +138,32 @@ const PaymentManagement = () => {
       if (error) throw error;
     } catch (error) {
       console.error('Error sending notification:', error);
+    }
+  };
+
+  // Fungsi untuk mengurangi stok
+  const reduceStock = async (orderItems) => {
+    for (const item of orderItems) {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('stock')
+        .eq('id', item.menu_item_id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching menu item:', error);
+        continue;
+      }
+
+      const newStock = Math.max(0, data.stock - item.quantity);
+      const { error: updateError } = await supabase
+        .from('menu_items')
+        .update({ stock: newStock })
+        .eq('id', item.menu_item_id);
+
+      if (updateError) {
+        console.error('Error updating stock:', updateError);
+      }
     }
   };
 

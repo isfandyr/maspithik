@@ -69,7 +69,12 @@ const FullMenu = ({ addToCart }) => {
   };
 
   const handleIncrement = (id) => {
-    setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
+    const item = menuItems.find(item => item.id === id);
+    if (item && quantities[id] < item.stock) {
+      setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
+    } else {
+      toast.error('Stok tidak mencukupi');
+    }
   };
 
   const handleDecrement = (id) => {
@@ -164,6 +169,7 @@ const FullMenu = ({ addToCart }) => {
               <h3 className="text-xl font-bold mb-2">{item.title}</h3>
               <p className="text-base text-gray-300 mb-4 flex-grow">{item.description}</p>
               <p className="font-bold text-lg mb-4">Rp {item.price.toLocaleString()}</p>
+              <p className="text-sm text-gray-300 mb-2">Stok: {item.stock}</p>
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex items-center space-x-2">
                   <button 
@@ -175,14 +181,20 @@ const FullMenu = ({ addToCart }) => {
                   <span className="font-bold">{quantities[item.id]}</span>
                   <button 
                     onClick={() => handleIncrement(item.id)}
-                    className="bg-white text-black rounded-full p-1 hover:bg-gray-200 transition-colors duration-200"
+                    className={`bg-white text-black rounded-full p-1 transition-colors duration-200 ${
+                      quantities[item.id] >= item.stock ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                    }`}
+                    disabled={quantities[item.id] >= item.stock}
                   >
                     <FiPlus className="w-5 h-5" />
                   </button>
                 </div>
                 <button 
                   onClick={() => handleAddToCart(item.id)}
-                  className="flex items-center space-x-2 bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
+                  className={`flex items-center space-x-2 bg-white text-black px-4 py-2 rounded-full transition-colors duration-200 ${
+                    quantities[item.id] === 0 || quantities[item.id] > item.stock ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                  }`}
+                  disabled={quantities[item.id] === 0 || quantities[item.id] > item.stock}
                 >
                   <FiShoppingCart className="w-5 h-5" />
                 </button>

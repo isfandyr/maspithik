@@ -14,7 +14,8 @@ const MenuManagement = () => {
     description: '',
     price: '',
     category: '',
-    status: 'active'
+    status: 'active',
+    stock: 0 // Tambahkan ini
   });
 
   useEffect(() => {
@@ -99,7 +100,8 @@ const MenuManagement = () => {
       description: '',
       price: '',
       category: '',
-      status: 'active'
+      status: 'active',
+      stock: 0 // Tambahkan ini
     });
     setEditingItem(null);
     setImageFile(null);
@@ -123,7 +125,8 @@ const MenuManagement = () => {
         price: Number(newItem.price) || 0,
         category: newItem.category || 'Uncategorized',
         image_url: imageUrl,
-        status: newItem.status || 'active'
+        status: newItem.status || 'active',
+        stock: Number(newItem.stock) || 0 // Tambahkan ini
       };
 
       const { data, error } = await supabase
@@ -178,7 +181,8 @@ const MenuManagement = () => {
       const updatedFields = { 
         ...updatedItem, 
         image_url: imageUrl,
-        price: Number(updatedItem.price) || 0
+        price: Number(updatedItem.price) || 0,
+        stock: Number(updatedItem.stock) || 0 // Tambahkan ini
       };
       console.log('Fields to update:', updatedFields);
 
@@ -312,6 +316,15 @@ const MenuManagement = () => {
           <option value="Sate & Gorengan">Sate & Gorengan</option>
           <option value="Jajanan">Jajanan</option>
         </select>
+        <input 
+          type="number" 
+          name="stock" 
+          placeholder="Stok" 
+          required 
+          value={formData.stock} 
+          onChange={(e) => setFormData({...formData, stock: e.target.value})}
+          className="input" 
+        />
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Image
@@ -385,6 +398,7 @@ const MenuManagement = () => {
             <p className="font-semibold mt-2">Rp {item?.price?.toLocaleString() || '0'}</p>
             <p className="text-sm mt-1">Category: {item?.category || 'Uncategorized'}</p>
             <p className="text-sm mt-1">Status: {item?.status || 'Unknown'}</p>
+            <p className="text-sm mt-1">Stok: {item?.stock || '0'}</p>
             <div className="mt-4 flex justify-end space-x-2">
               <button
                 onClick={() => {
@@ -394,7 +408,8 @@ const MenuManagement = () => {
                     description: item.description,
                     price: item.price,
                     category: item.category,
-                    status: item.status
+                    status: item.status,
+                    stock: item.stock
                   });
                 }}
                 className="text-blue-500 hover:text-blue-700"
