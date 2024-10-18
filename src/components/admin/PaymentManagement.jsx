@@ -40,6 +40,7 @@ const PaymentManagement = () => {
             price,
             menu_items (id, title)
           ),
+          users (id, email, name),
           proof_of_payment_url
         `, { count: 'exact' })
         .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
@@ -173,6 +174,8 @@ const PaymentManagement = () => {
         <h3 className="text-2xl font-bold mb-4">Detail Pesanan</h3>
         <p><strong>ID Pesanan:</strong> {order.id}</p>
         <p><strong>Tanggal:</strong> {new Date(order.created_at).toLocaleString()}</p>
+        <p><strong>Nama Pelanggan:</strong> {order.users?.name || 'Tidak diketahui'}</p>
+        <p><strong>Email Pelanggan:</strong> {order.users?.email || 'Tidak diketahui'}</p>
         <p><strong>Status:</strong> {getIndonesianStatus(order.status)}</p>
         <p><strong>Status Pembayaran:</strong> {getIndonesianStatus(order.payment_status)}</p>
         <p><strong>Metode Pembayaran:</strong> {order.payment_method}</p>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
-import { FiDollarSign, FiShoppingBag, FiUsers, FiActivity } from 'react-icons/fi';
+import { FiDollarSign, FiShoppingBag, FiActivity } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { Bar } from 'react-chartjs-2';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -32,10 +34,6 @@ const AdminOverview = () => {
   const [dailyRevenue, setDailyRevenue] = useState([]);
   const [topMenuItems, setTopMenuItems] = useState([]);
   const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 1)));
-  const [endDate, setEndDate] = useState(new Date());
-  const [filterType, setFilterType] = useState('daily');
-  const [filteredRevenue, setFilteredRevenue] = useState(0);
 
   // Mengambil data dari Supabase
   const fetchWithRetry = async (fetcher, maxRetries = 3) => {
@@ -51,22 +49,15 @@ const AdminOverview = () => {
 
   useEffect(() => {
     fetchOverviewData();
-    fetchDailyRevenue();
+    fetchRevenueData();
     fetchTopMenuItems();
-  }, []);
+  }, [startDate, endDate, viewMode]);
 
   const fetchOverviewData = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      
-      const { data: revenueData } = await fetchWithRetry(() => 
-        supabase.from('orders').select('total_amount').eq('payment_status', 'paid')
-      );
-      const revenue = revenueData.reduce((sum, order) => sum + order.total_amount, 0);
-      setTotalRevenue(revenue);
-
       // Mengambil total item yang terjual dari tabel order_items
       const { data: itemsData } = await fetchWithRetry(() => 
         supabase.from('order_items').select('quantity')
@@ -74,8 +65,13 @@ const AdminOverview = () => {
       const itemsSold = itemsData.reduce((sum, item) => sum + item.quantity, 0);
       setTotalItemsSold(itemsSold);
 
-      // Menghapus bagian yang mengambil jumlah total pengguna
+      // Mengambil jumlah total pengguna dari tabel profiles
+      const { count: usersCount } = await fetchWithRetry(() => 
+        supabase.from('profiles').select('id', { count: 'exact', head: true })
+      );
+      setTotalUsers(usersCount);
 
+      
       const { count: ordersCount } = await fetchWithRetry(() => 
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       );
@@ -90,7 +86,7 @@ const AdminOverview = () => {
     }
   };
 
-   // Mengambil data pendapatan untuk ditampilkan di grafik
+   // Mengambil data pendapatan harian untuk ditampilkan di grafik
   const fetchDailyRevenue = async () => {
     try {
       const { data, error } = await fetchWithRetry(() => 
@@ -105,24 +101,17 @@ const AdminOverview = () => {
 
       if (error) throw error;
 
-      // Mengelompokkan pendapatan berdasarkan tanggal atau bulan
-      const groupedData = data.reduce((acc, order) => {
-        const date = new Date(order.created_at);
-        const key = filterType === 'daily' 
-          ? date.toLocaleDateString() 
-          : `${date.getFullYear()}-${date.getMonth() + 1}`;
-        acc[key] = (acc[key] || 0) + order.total_amount;
+      // Mengelompokkan pendapatan berdasarkan tanggal
+      const dailyData = data.reduce((acc, order) => {
+        const date = new Date(order.created_at).toLocaleDateString();
+        acc[date] = (acc[date] || 0) + order.total_amount;
         return acc;
       }, {});
 
-      setDailyRevenue(Object.entries(groupedData).map(([date, amount]) => ({ date, amount })));
-      
-      // Menghitung total pendapatan untuk periode yang dipilih
-      const totalFilteredRevenue = Object.values(groupedData).reduce((sum, amount) => sum + amount, 0);
-      setFilteredRevenue(totalFilteredRevenue);
+      setDailyRevenue(Object.entries(dailyData).map(([date, amount]) => ({ date, amount })));
     } catch (error) {
       console.error('Error fetching daily revenue:', error);
-      toast.error('Gagal memuat data pendapatan');
+      toast.error('Gagal memuat data pendapatan harian');
     }
   };
 
@@ -151,12 +140,12 @@ const AdminOverview = () => {
     }
   };
 
-  // Data untuk grafik pendapatan harian
+  // Data untuk grafik pendapatan
   const revenueChartData = {
     labels: dailyRevenue.map(item => item.date),
     datasets: [
       {
-        label: 'Pendapatan',
+        label: 'Pendapatan Harian',
         data: dailyRevenue.map(item => item.amount),
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
         borderColor: 'rgb(0, 0, 0)',
@@ -180,7 +169,7 @@ const AdminOverview = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-0">
         <div className="bg-card p-6 rounded-lg shadow-md">
           <div className="flex items-center justify-between">
             <div>
@@ -202,10 +191,10 @@ const AdminOverview = () => {
         <div className="bg-card p-6 rounded-lg shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-semibold">Pesanan Aktif</p>
-              <p className="text-3xl font-bold">{activeOrders}</p>
+              <p className="text-lg font-semibold">Total Pengguna</p>
+              <p className="text-3xl font-bold">{totalUsers}</p>
             </div>
-            <FiActivity className="text-4xl text-black" />
+            <FiUsers className="text-4xl text-yellow-500" />
           </div>
         </div>
         <div className="bg-card p-6 rounded-lg shadow-md">
@@ -220,34 +209,7 @@ const AdminOverview = () => {
       </div>
 
       <div className="bg-card p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Grafik Pendapatan</h2>
-        <div className="flex space-x-4 mb-4">
-          <DatePicker
-            selected={startDate}
-            onChange={date => setStartDate(date)}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            className="p-2 border rounded"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={date => setEndDate(date)}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            className="p-2 border rounded"
-          />
-          <select
-            value={filterType}
-            onChange={e => setFilterType(e.target.value)}
-            className="p-2 border rounded"
-          >
-            <option value="daily">Harian</option>
-            <option value="monthly">Bulanan</option>
-          </select>
-        </div>
+        <h2 className="text-xl font-semibold mb-4">Grafik Pendapatan Harian</h2>
         <div style={{ height: '300px' }}>
           <Bar data={revenueChartData} options={chartOptions} />
         </div>
