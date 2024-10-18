@@ -17,6 +17,7 @@
     "@react-pdf/renderer": "^4.0.0",
     "@supabase/supabase-js": "^2.45.1",
     "autoprefixer": "^10.4.20",
+    "DatePicker": "^2.0.0",
     "emailjs-com": "^3.2.0",
     "framer-motion": "^11.3.28",
     "postcss": "^8.4.41",
